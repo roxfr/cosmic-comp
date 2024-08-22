@@ -221,6 +221,8 @@ pub struct Common {
     pub workspace_state: WorkspaceState<State>,
     pub xwayland_state: Option<XWaylandState>,
     pub xwayland_shell_state: XWaylandShellState,
+
+    pub atspi_ei: crate::atspi_ei::AtspiEiState,
 }
 
 #[derive(Debug)]
@@ -557,6 +559,8 @@ impl State {
             tracing::warn!(?err, "Failed to initialize dbus handlers");
         }
 
+        crate::atspi_ei::listen_eis(&handle);
+
         State {
             common: Common {
                 config,
@@ -608,6 +612,8 @@ impl State {
                 workspace_state,
                 xwayland_state: None,
                 xwayland_shell_state,
+
+                atspi_ei: Default::default(),
             },
             backend: BackendData::Unset,
             ready: Once::new(),
